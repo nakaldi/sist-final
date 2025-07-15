@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 
 @Slf4j(topic = "JwtUtil")
 @Component
@@ -50,6 +51,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(userId.toString()) // 토큰의 주체(사용자 이름) 설정
+                .setClaims(Map.of("roles", role))
                 .setIssuedAt(now) // 토큰 발급 시간 설정
                 .setExpiration(expirationDate) // 토큰 만료 시간 설정
                 .signWith(key, SignatureAlgorithm.HS256) // 사용할 암호화 알고리즘과 키로 서명

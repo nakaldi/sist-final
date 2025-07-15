@@ -40,6 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 토큰 유효성 검증
             if (jwtUtil.validateToken(token)) {
                 Claims userInfo = jwtUtil.getUserInfoFromToken(token);
+                log.debug("토큰 유효성 검증 중 jwt Claims: {}", userInfo);
 
                 try {
                     Long userId = Long.parseLong(userInfo.getSubject());
