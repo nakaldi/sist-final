@@ -3,6 +3,7 @@ package io.cavia.trader.common.config;
 import io.cavia.trader.module.jwt.JwtAuthenticationFilter;
 import io.cavia.trader.module.jwt.JwtUtil;
 import io.cavia.trader.module.member.repository.MemberRepository;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -54,8 +55,22 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/api/posts/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/notices/**").hasRole("ADMIN")
                         .requestMatchers("/api/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/members/me", "/members/me/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                         .anyRequest().permitAll()
+        );
+
+        http.exceptionHandling(exception -> exception
+                // 1. 인증되지 않은 사용자가 보호된 리소스에 접근할 때 호출될 핸들러를 설정합니다.
+                .authenticationEntryPoint((request, response, authException) -> {
+                    // 클라이언트에게 401 Unauthorized 에러를 응답합니다.
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "인증이 필요합니다.");
+                })
+                // 2. 인증은 되었지만, 특정 리소스에 접근할 권한이 없을 때 호출될 핸들러를 설정합니다.
+                .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    // 클라이언트에게 403 Forbidden 에러를 응답합니다.
+                    response.sendError(HttpServletResponse.SC_FORBIDDEN, "접근 권한이 없습니다.");
+                })
         );
 
         // 커스텀 필터인 JwtAuthenticationFilter를 UsernamePasswordAuthenticationFilter 앞에 추가
