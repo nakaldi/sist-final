@@ -18,7 +18,7 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
  * @author KimBeomhee
  */
 @Slf4j
-@RestControllerAdvice(annotations = RestController.class)
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
