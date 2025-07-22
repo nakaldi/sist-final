@@ -13,9 +13,8 @@ import org.springframework.util.StringUtils;
 import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
-import java.util.Map;
 
-@Slf4j(topic = "JwtUtil")
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -73,6 +72,7 @@ public class JwtUtil {
 
     /**
      * 주어진 토큰의 유효성을 검증하는 메서드 (0.12.5 버전용)
+     *
      * @param token 검증할 JWT 문자열
      * @return 토큰이 유효하면 true, 아니면 false
      */
@@ -86,6 +86,7 @@ public class JwtUtil {
                     .verifyWith((SecretKey) key) // key가 SecretKey 타입이어야 합니다.
                     .build()
                     .parseSignedClaims(token);
+            log.debug("JWT 인증됨");
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             log.warn("유효하지 않은 JWT 서명입니다.", e);
@@ -96,11 +97,13 @@ public class JwtUtil {
         } catch (IllegalArgumentException e) {
             log.warn("JWT 클레임 문자열이 비어있습니다.", e);
         }
+        log.debug("JWT 인증 실패함");
         return false;
     }
 
     /**
      * 유효한 토큰에서 사용자 정보를 추출하는 메서드 (0.12.5 버전용)
+     *
      * @param token 유효성이 검증된 JWT 문자열
      * @return 토큰에 담긴 사용자 정보(Claims) 객체
      */

@@ -1,8 +1,8 @@
 package io.cavia.trader.module.jwt;
 
+import io.cavia.trader.module.auth.security.UserDetailsImpl;
 import io.cavia.trader.module.member.entity.Member;
 import io.cavia.trader.module.member.repository.MemberRepository;
-import io.cavia.trader.module.auth.security.UserDetailsImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -20,7 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-@Slf4j(topic = "JWT 검증 및 인가")
+@Slf4j
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
@@ -40,7 +40,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // 토큰 유효성 검증
             if (jwtUtil.validateToken(token)) {
                 Claims userInfo = jwtUtil.getUserInfoFromToken(token);
-                log.debug("토큰 유효성 검증 중 jwt Claims: {}", userInfo);
+                log.debug("토큰 유효성 검증 완료 후 jwt Claims: {}", userInfo);
 
                 try {
                     Long userId = Long.parseLong(userInfo.getSubject());
