@@ -2,8 +2,8 @@ package io.cavia.trader.module.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cavia.trader.common.response.ApiResponse;
-import io.cavia.trader.module.jwt.JwtAuthenticationFilter;
-import io.cavia.trader.module.jwt.JwtUtil;
+import io.cavia.trader.module.auth.jwt.JwtAuthenticationFilter;
+import io.cavia.trader.module.auth.jwt.JwtUtil;
 import io.cavia.trader.module.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

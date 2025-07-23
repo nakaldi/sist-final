@@ -1,4 +1,4 @@
-package io.cavia.trader.module.jwt;
+package io.cavia.trader.module.auth.jwt;
 
 import io.cavia.trader.module.auth.security.UserDetailsImpl;
 import io.cavia.trader.module.member.entity.Member;

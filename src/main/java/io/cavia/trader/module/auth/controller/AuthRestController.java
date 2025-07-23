@@ -5,7 +5,7 @@ import io.cavia.trader.common.response.ApiResponses;
 import io.cavia.trader.module.auth.dto.*;
 import io.cavia.trader.module.auth.security.UserDetailsImpl;
 import io.cavia.trader.module.auth.service.AuthService;
-import io.cavia.trader.module.jwt.JwtUtil;
+import io.cavia.trader.module.auth.jwt.JwtUtil;
 import io.cavia.trader.module.member.entity.Member;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

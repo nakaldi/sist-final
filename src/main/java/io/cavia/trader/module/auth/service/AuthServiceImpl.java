@@ -7,7 +7,7 @@ import io.cavia.trader.module.auth.aop.RequiresRecaptcha;
 import io.cavia.trader.module.auth.dto.SignupRequestDto;
 import io.cavia.trader.module.auth.entity.EmailVerification;
 import io.cavia.trader.module.auth.repository.EmailVerificationRepository;
-import io.cavia.trader.module.jwt.JwtUtil;
+import io.cavia.trader.module.auth.jwt.JwtUtil;
 import io.cavia.trader.module.member.entity.Member;
 import io.cavia.trader.module.member.service.MemberService;
 import lombok.RequiredArgsConstructor;

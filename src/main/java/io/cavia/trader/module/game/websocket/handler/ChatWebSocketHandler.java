@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cavia.trader.module.game.dto.ChatLog;
 import io.cavia.trader.module.game.dto.GameDto;
 import io.cavia.trader.module.game.service.GameManager;
-import io.cavia.trader.module.jwt.JwtUtil;
+import io.cavia.trader.module.auth.jwt.JwtUtil;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
