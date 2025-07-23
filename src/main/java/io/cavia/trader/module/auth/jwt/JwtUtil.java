@@ -24,10 +24,13 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
 
     @Value("${jwt.secret.key}")
-    private String secretKey; // application.properties에서 주입받은 비밀 키
+    private String secretKey; // application.properties 에서 주입받은 비밀 키
 
-    @Value("${jwt.token.expiration.time}")
-    private long tokenExpirationTime; // application.properties에서 주입받은 토큰 만료 시간
+    @Value("${jwt.access-token.expiration.time:1800000L}")
+    private long accessTokenExpirationTime; // application.properties 에서 주입받은 액세스 토큰 만료 시간, 기본값 30분
+
+    @Value("${jwt.refresh-token.expiration.time:604800000L}")
+    private long refreshTokenExpirationTime; // application.properties 에서 주입받은 리프레시 토큰 만료시간, 기본값 7일
 
     private Key key; // JWT 서명에 사용할 키 객체
 
@@ -46,7 +49,7 @@ public class JwtUtil {
      */
     public String createToken(Long userId, MemberRoleEnum role) {
         Date now = new Date();
-        Date expirationDate = new Date(now.getTime() + tokenExpirationTime);
+        Date expirationDate = new Date(now.getTime() + accessTokenExpirationTime);
 
         return Jwts.builder()
                 .setSubject(userId.toString()) // 토큰의 주체(사용자 이름) 설정
