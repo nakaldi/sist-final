@@ -26,12 +26,6 @@ public class JwtUtil {
     @Value("${jwt.secret.key}")
     private String secretKey; // application.properties 에서 주입받은 비밀 키
 
-    @Value("${jwt.access-token.expiration.time:1800000L}")
-    private long accessTokenExpirationTime; // application.properties 에서 주입받은 액세스 토큰 만료 시간, 기본값 30분
-
-    @Value("${jwt.refresh-token.expiration.time:604800000L}")
-    private long refreshTokenExpirationTime; // application.properties 에서 주입받은 리프레시 토큰 만료시간, 기본값 7일
-
     private Key key; // JWT 서명에 사용할 키 객체
 
     // @PostConstruct: 의존성 주입이 완료된 후 실행되는 초기화 메서드
@@ -48,7 +42,7 @@ public class JwtUtil {
      * @param role   사용자 역할
      * @return 생성된 JWT 문자열
      */
-    public String createToken(Long userId, MemberRoleEnum role) {
+    public String createToken(Long userId, MemberRoleEnum role, long accessTokenExpirationTime) {
         Date now = new Date();
         Date expirationDate = new Date(now.getTime() + accessTokenExpirationTime);
 

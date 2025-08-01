@@ -5,13 +5,17 @@ import io.cavia.trader.common.exception.ApiException;
 import io.cavia.trader.common.exception.ErrorCode;
 import io.cavia.trader.module.auth.aop.RequiresRecaptcha;
 import io.cavia.trader.module.auth.dto.SignupRequestDto;
+import io.cavia.trader.module.auth.dto.TokenDto;
 import io.cavia.trader.module.auth.entity.EmailVerification;
-import io.cavia.trader.module.auth.repository.EmailVerificationRepository;
+import io.cavia.trader.module.auth.entity.RefreshToken;
 import io.cavia.trader.module.auth.jwt.JwtUtil;
+import io.cavia.trader.module.auth.repository.EmailVerificationRepository;
+import io.cavia.trader.module.auth.repository.RefreshTokenRepository;
 import io.cavia.trader.module.member.entity.Member;
 import io.cavia.trader.module.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -37,6 +42,13 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final TemplateEngine templateEngine;
     private final MemberService memberService;
+    private final RefreshTokenRepository refreshTokenRepository;
+
+    @Value("${auth.access-token.expiration.time:1800000L}")
+    private long accessTokenExpirationTime; // application.properties 에서 주입받은 액세스 토큰 만료 시간, 기본값 30분
+
+    @Value("${auth.refresh-token.expiration.time:604800000L}")
+    private long refreshTokenExpirationTime; // application.properties 에서 주입받은 리프레시 토큰 만료시간, 기본값 7일
 
     @RequiresRecaptcha
     @Override
@@ -95,12 +107,26 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public String login(String email, String password) {
+    public TokenDto login(String email, String password, String userAgent) {
         try {
+            // 로그인 아이디와 비밀번호 검증
             Member member = memberService.getMemberByEmail(email);
             memberService.validatePassword(member.getId(), password);
-            return jwtUtil.createToken(member.getId(), member.getRole());
+
+            // 액세스 토큰 생성
+            String accessToken = jwtUtil.createToken(member.getId(), member.getRole(), accessTokenExpirationTime);
+
+            // 리프레시 토큰 생성 (UUID 사용해서 고유 토큰 생성)
+            String refreshTokenValue = UUID.randomUUID().toString();
+
+            // 리프레시 토큰을 DB에 저장
+            refreshTokenRepository.save(RefreshToken.create(
+                    member.getId(),
+                    refreshTokenValue,
+                    userAgent,
+                    refreshTokenExpirationTime // 설정된 만료 시간(ms)
+            ));
+            return new TokenDto("Bearer", accessToken, accessTokenExpirationTime / 1000, refreshTokenValue);
         } catch (ApiException e) {
             throw new ApiException(ErrorCode.LOGIN_FAILED);
         }
