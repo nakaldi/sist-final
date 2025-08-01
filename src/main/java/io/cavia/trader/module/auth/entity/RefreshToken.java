@@ -19,8 +19,7 @@ public class RefreshToken {
     private LocalDateTime expiresAt;
 
     /**
-     * 새로운 이메일 인증 객체를 생성하는 정적 팩토리 메서드입니다.
-     * 생성 로직을 캡슐화하여 서비스 코드의 가독성과 일관성을 높여줍니다.
+     * 리프레시 토큰 객체를 생성하는 정적 팩토리 메서드입니다.
      *
      * @param memberId          리프레시 토큰 발급 대상 사용자 고유 id
      * @param tokenValue        생성된 리프레시 토큰 값

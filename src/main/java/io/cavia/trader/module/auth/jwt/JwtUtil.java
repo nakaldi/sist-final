@@ -45,6 +45,7 @@ public class JwtUtil {
      * 사용자 고유번호를 받아 JWT를 생성하는 메서드
      *
      * @param userId 사용자 고유번호
+     * @param role   사용자 역할
      * @return 생성된 JWT 문자열
      */
     public String createToken(Long userId, MemberRoleEnum role) {
