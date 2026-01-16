@@ -3,10 +3,11 @@ package io.cavia.trader.module.auth.controller;
 import io.cavia.trader.common.response.ApiResponse;
 import io.cavia.trader.common.response.ApiResponses;
 import io.cavia.trader.module.auth.dto.*;
+import io.cavia.trader.module.auth.jwt.JwtUtil;
 import io.cavia.trader.module.auth.security.UserDetailsImpl;
 import io.cavia.trader.module.auth.service.AuthService;
-import io.cavia.trader.module.jwt.JwtUtil;
 import io.cavia.trader.module.member.entity.Member;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +34,11 @@ public class AuthRestController {
      */
     @PostMapping("/api/auth/login")
     public ResponseEntity<ApiResponse<?>> login(@Valid @RequestBody LoginRequestDto requestDto,
-                                                HttpServletResponse response) {
-        String token = authService.login(requestDto.getEmail(), requestDto.getPassword());
-        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, JwtUtil.BEARER_PREFIX + token);
-        return ApiResponses.ok("토큰이 발급되었습니다", null);
+                                                HttpServletResponse response,
+                                                HttpServletRequest request) {
+        TokenDto token = authService.login(requestDto.getEmail(), requestDto.getPassword(), request.getHeader("User-Agent"));
+        response.setHeader(JwtUtil.AUTHORIZATION_HEADER, JwtUtil.BEARER_PREFIX + token.getAccessToken());
+        return ApiResponses.ok("토큰이 발급되었습니다", token);
     }
 
     /**

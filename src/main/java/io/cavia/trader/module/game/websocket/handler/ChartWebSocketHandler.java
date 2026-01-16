@@ -8,7 +8,7 @@ import io.cavia.trader.module.game.dto.OrderTableDto;
 import io.cavia.trader.module.game.dto.TradeLog;
 import io.cavia.trader.module.game.dto.response.ResponseDto;
 import io.cavia.trader.module.game.service.GameManager;
-import io.cavia.trader.module.jwt.JwtUtil;
+import io.cavia.trader.module.auth.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

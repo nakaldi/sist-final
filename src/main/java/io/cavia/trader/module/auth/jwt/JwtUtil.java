@@ -1,4 +1,4 @@
-package io.cavia.trader.module.jwt;
+package io.cavia.trader.module.auth.jwt;
 
 import io.cavia.trader.module.member.entity.MemberRoleEnum;
 import io.jsonwebtoken.*;
@@ -14,7 +14,7 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 import java.util.Date;
 
-@Slf4j(topic = "JwtUtil")
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -24,10 +24,7 @@ public class JwtUtil {
     public static final String BEARER_PREFIX = "Bearer ";
 
     @Value("${jwt.secret.key}")
-    private String secretKey; // application.properties에서 주입받은 비밀 키
-
-    @Value("${jwt.token.expiration.time}")
-    private long tokenExpirationTime; // application.properties에서 주입받은 토큰 만료 시간
+    private String secretKey; // application.properties 에서 주입받은 비밀 키
 
     private Key key; // JWT 서명에 사용할 키 객체
 
@@ -42,14 +39,16 @@ public class JwtUtil {
      * 사용자 고유번호를 받아 JWT를 생성하는 메서드
      *
      * @param userId 사용자 고유번호
+     * @param role   사용자 역할
      * @return 생성된 JWT 문자열
      */
-    public String createToken(Long userId, MemberRoleEnum role) {
+    public String createToken(Long userId, MemberRoleEnum role, long accessTokenExpirationTime) {
         Date now = new Date();
-        Date expirationDate = new Date(now.getTime() + tokenExpirationTime);
+        Date expirationDate = new Date(now.getTime() + accessTokenExpirationTime);
 
         return Jwts.builder()
                 .setSubject(userId.toString()) // 토큰의 주체(사용자 이름) 설정
+                .claim("roles", role)
                 .setIssuedAt(now) // 토큰 발급 시간 설정
                 .setExpiration(expirationDate) // 토큰 만료 시간 설정
                 .signWith(key, SignatureAlgorithm.HS256) // 사용할 암호화 알고리즘과 키로 서명
@@ -71,6 +70,7 @@ public class JwtUtil {
 
     /**
      * 주어진 토큰의 유효성을 검증하는 메서드 (0.12.5 버전용)
+     *
      * @param token 검증할 JWT 문자열
      * @return 토큰이 유효하면 true, 아니면 false
      */
@@ -84,6 +84,7 @@ public class JwtUtil {
                     .verifyWith((SecretKey) key) // key가 SecretKey 타입이어야 합니다.
                     .build()
                     .parseSignedClaims(token);
+            log.debug("JWT 인증됨");
             return true;
         } catch (SecurityException | MalformedJwtException e) {
             log.warn("유효하지 않은 JWT 서명입니다.", e);
@@ -94,11 +95,13 @@ public class JwtUtil {
         } catch (IllegalArgumentException e) {
             log.warn("JWT 클레임 문자열이 비어있습니다.", e);
         }
+        log.debug("JWT 인증 실패함");
         return false;
     }
 
     /**
      * 유효한 토큰에서 사용자 정보를 추출하는 메서드 (0.12.5 버전용)
+     *
      * @param token 유효성이 검증된 JWT 문자열
      * @return 토큰에 담긴 사용자 정보(Claims) 객체
      */

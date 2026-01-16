@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
- * 프로젝트 전역에서 발생하는 모든 예외를 처리하는 클래스
+ * 컨트롤러 전역에서 발생하는 모든 예외를 처리해 ResponseBody 형식으로 응답하는 클래스
  *
  * @author KimBeomhee
  */
 @Slf4j
-@RestControllerAdvice(annotations = RestController.class)
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**

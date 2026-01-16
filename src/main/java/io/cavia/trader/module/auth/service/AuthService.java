@@ -1,6 +1,7 @@
 package io.cavia.trader.module.auth.service;
 
 import io.cavia.trader.module.auth.dto.SignupRequestDto;
+import io.cavia.trader.module.auth.dto.TokenDto;
 import io.cavia.trader.module.member.entity.Member;
 
 public interface AuthService {
@@ -47,12 +48,13 @@ public interface AuthService {
     /**
      * 사용자의 이메일과 비밀번호를 받아 로그인을 수행합니다.
      *
-     * @param email    로그인 시도 이메일
-     * @param password 로그인 시도 비밀번호
-     * @return 로그인 성공 시 발급된 JWT
+     * @param email     로그인 시도 이메일
+     * @param password  로그인 시도 비밀번호
+     * @param userAgent 클라이언트 User-Agent
+     * @return 로그인 성공 시 발급된 JWT와 리프레시 토큰이 담겨있는 TokenDto
      * @throws io.cavia.trader.common.exception.ApiException 로그인 실패 시
      */
-    String login(String email, String password);
+    TokenDto login(String email, String password, String userAgent);
 
     /**
      * 이메일과 인증 코드로 사용자를 검증한 후, 새 비밀번호로 재설정합니다.

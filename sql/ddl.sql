@@ -152,3 +152,13 @@ CREATE TABLE posts (
     INDEX idx_created_at (created_at DESC),
     FOREIGN KEY (member_id) REFERENCES members (id) ON DELETE CASCADE
 );
+
+CREATE TABLE refresh_tokens (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    member_id INT NOT NULL,
+    token_value VARCHAR(255) NOT NULL UNIQUE,
+    user_agent VARCHAR(255),
+    issued_at DATETIME NOT NULL,
+    expires_at DATETIME NOT NULL,
+    FOREIGN KEY (member_id) REFERENCES members (id) ON DELETE CASCADE
+);
